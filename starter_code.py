@@ -32,10 +32,16 @@ def bubble_sort(arr):
     # TODO: Implement bubble sort
     # Hint: Use nested loops - outer loop for passes, inner loop for comparisons
     # Hint: Compare adjacent elements and swap if left > right
+
+    for i in range(len(arr)):
+        for j in range(0, len(arr) -1 - i):
+            if arr[j] > arr[j + 1]:
+                temp = arr[j]
+                arr[j] = arr[j + 1]
+                arr[j + 1] = temp
     
-    pass  # Delete this and write your code
-
-
+    return arr 
+                
 def selection_sort(arr):
     """
     Sort array using selection sort algorithm.
@@ -55,7 +61,14 @@ def selection_sort(arr):
     # TODO: Implement selection sort
     # Hint: Find minimum element in unsorted portion, swap it with first unsorted element
     
-    pass  # Delete this and write your code
+    for i in range(len(arr)):
+        min_index = i
+        for j in range(i + 1, len(arr)):
+            if arr[j] < arr[min_index]:
+                min_index = j
+        arr[i], arr[min_index] = arr[min_index], arr[i]
+
+    return arr
 
 
 def insertion_sort(arr):
@@ -77,8 +90,16 @@ def insertion_sort(arr):
     # TODO: Implement insertion sort
     # Hint: Start from second element, insert it into correct position in sorted portion
     
-    pass  # Delete this and write your code
+    for step in range(1, len(arr)):
+        key = arr[step]
+        j = step - 1
 
+        while j >= 0 and key < arr[j]:
+            arr[j + 1] = arr[j]
+            j = j - 1
+        arr[j + 1] = key
+
+    return arr
 
 def merge_sort(arr):
     """
@@ -101,8 +122,34 @@ def merge_sort(arr):
     # Hint: Recursive case - split array in half, sort each half, merge sorted halves
     # Hint: You'll need a helper function to merge two sorted arrays
     
-    pass  # Delete this and write your code
+    if len(arr) <= 1:
+        return arr
+    
+    mid = len(arr) // 2
+    left = arr[:mid]
+    right = arr[mid:]
 
+    left = merge_sort(left)
+    right = merge_sort(right)
+
+    def merge(left, right):
+        result = []
+        i = j = 0
+
+        while i < len(left) and j < len(right):
+            if left[i] < right[j]:
+                result.append(left[i])
+                i += 1
+            else:
+                result.append(right[j])
+                j += 1
+        
+        result.extend(left[i:])
+        result.extend(right[j:])
+
+        return result
+    
+    return merge(left, right)
 
 # ============================================================================
 # PART 2: STABILITY DEMONSTRATION
@@ -142,6 +189,19 @@ def demonstrate_stability():
     
     # TODO: Test each algorithm and update results dictionary with "Stable" or "Unstable"
     
+    price = [products["price"] for product in products]
+
+    sorted_prices = bubble_sort(price.copy())
+
+    sorted_products = []
+    price_copy = price.copy()
+
+    for sorted_price in sorted_prices:
+        for i, original_price in enumerate(price_copy):
+            if original_price == sorted_price:
+                sorted_products.append(products[i])
+                price_copy[i] = None
+                break
     return results
 
 
@@ -288,7 +348,7 @@ if __name__ == "__main__":
     # Uncomment these as you complete each part:
     
     # test_sorting_correctness()
-    # benchmark_all_datasets()
+    benchmark_all_datasets()
     # analyze_stability()
     
     print("\n⚠ Uncomment the test functions in the main block to run benchmarks!")
